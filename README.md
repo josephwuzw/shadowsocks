@@ -1,3 +1,60 @@
+#shadowsocks 多用户分支上的简单网站管理界面
+
+基于 [mengskysama](https://github.com/mengskysama/shadowsocks/tree/manyuser) 的多用户分支
+用django admin定义了极其简单的管理界面
+
+除了增加django网站外，基本没有动前面分支代码，除了：
+1. 将数据库操作从原来的cymysql方式改为django内置的model方式，因此数据库设置从原来的config.py中转移至django的settings.py文件；
+2. 默认数据库为sqlite，使用其他数据库在settings.py中修改
+3. 增加enable字段判断，从而在网页中修改字段值后能停止相应的服务
+
+安装：
+=====
+1. virtual env 
+virtualenv env
+source env/bin/active
+
+2. packages
+apt-get install swig
+pip install -i http://pypi.douban.com/simple/ -r requirement.txt
+
+或
+apt-get install python-m2crypto
+pip install -i http://pypi.douban.com/simple/ Django==1.6.8
+
+3. run django
+cd webfrontend
+
+./manage.py syncdb
+根据提示创建管理用户
+
+./manage runserver
+
+4. run shadowsocks
+cd shadowsocks
+python server.py
+
+其他:
+=====
+1. 使用mysql或其他作为数据库新建
+如使用mysql,安装MySQL-python包(posgresql安装psycopg2包)
+在安装步骤3之前修改settings.py文件中数据库部分
+在数据库中创建数据库，不用创建表
+
+2. 使用已有数据库
+一般是mysql，表用原来的shadowsocks.sql创建
+除了安装MySQL-python和修改settings.py外
+修改webfrontend/shadowsocks/models.py文件
+将以下三行的注释去掉
+class Meta:
+    managed = False
+    db_table = 'user'
+
+3. 配置
+settings.py中
+DEFAULT_THRESHOLD配置项设置默认的流量阀值
+
+
 shadowsocks manyuser branch
 ===========
 Which people need this branch
