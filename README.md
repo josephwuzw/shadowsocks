@@ -11,48 +11,73 @@
 安装：
 =====
 1. virtual env 
+
 virtualenv env
+
 source env/bin/active
 
 2. packages
+
 apt-get install swig
+
 pip install -i http://pypi.douban.com/simple/ -r requirement.txt
 
 或
+
 apt-get install python-m2crypto
+
 pip install -i http://pypi.douban.com/simple/ Django==1.6.8
 
 3. run django
+
 cd webfrontend
 
 ./manage.py syncdb
+
 根据提示创建管理用户
+
 
 ./manage runserver
 
 4. run shadowsocks
+
 cd shadowsocks
+
 python server.py
+
 
 其他:
 =====
 1. 使用mysql或其他作为数据库新建
+
 如使用mysql,安装MySQL-python包(posgresql安装psycopg2包)
+
 在安装步骤3之前修改settings.py文件中数据库部分
+
 在数据库中创建数据库，不用创建表
 
+
 2. 使用已有数据库
+
 一般是mysql，表用原来的shadowsocks.sql创建
+
 除了安装MySQL-python和修改settings.py外
+
 修改webfrontend/shadowsocks/models.py文件
+
 将以下三行的注释去掉
-class Meta:
-    managed = False
-    db_table = 'user'
+
+    class Meta:
+        managed = False
+        db_table = 'user'
 
 3. 配置
+
 settings.py中
+
 DEFAULT_THRESHOLD配置项设置默认的流量阀值
+
+
 
 
 shadowsocks manyuser branch
