@@ -9,9 +9,10 @@
 * 默认数据库为sqlite，使用其他数据库在settings.py中修改
 * 增加enable字段判断，从而在网页中修改字段值后能停止相应的服务
 
-![s1]("http://josephwuzw.github.io/images/ss1.png")
+![s1]("https://raw.githubusercontent.com/josephwuzw/josephwuzw.github.io/master/images/ss1.png")
 
-![s2]("http://josephwuzw.github.io/images/ss2.png")
+![s2]("https://raw.githubusercontent.com/josephwuzw/josephwuzw.github.io/master/images/ss2.png")
+
 
 安装：
 ------
