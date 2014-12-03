@@ -2,11 +2,16 @@
 # -*- coding: UTF-8 -*-
 
 import logging
-import cymysql
 import time
 import sys
 from server_pool import ServerPool
 import Config
+
+import os 
+sys.path.append(os.path.normpath(os.path.dirname(os.path.abspath(__file__)) + '/../webfrontend/'))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+
+from shadowsocks.models import SSInstance
 
 class DbTransfer(object):
 
@@ -45,60 +50,33 @@ class DbTransfer(object):
                 dt_transfer[id] = [curr_transfer[id][0], curr_transfer[id][1]]
 
         self.last_get_transfer = curr_transfer
-        query_head = 'UPDATE user'
-        query_sub_when = ''
-        query_sub_when2 = ''
-        query_sub_in = None
-        last_time = time.time()
+
         for id in dt_transfer.keys():
-            query_sub_when += ' WHEN %s THEN u+%s' % (id, dt_transfer[id][0])
-            query_sub_when2 += ' WHEN %s THEN d+%s' % (id, dt_transfer[id][1])
-            if query_sub_in is not None:
-                query_sub_in += ',%s' % id
-            else:
-                query_sub_in = '%s' % id
-        if query_sub_when == '':
-            return
-        query_sql = query_head + ' SET u = CASE port' + query_sub_when + \
-                    ' END, d = CASE port' + query_sub_when2 + \
-                    ' END, t = ' + str(int(last_time)) + \
-                    ' WHERE port IN (%s)' % query_sub_in
-        #print query_sql
-        conn = cymysql.connect(host=Config.MYSQL_HOST, port=Config.MYSQL_PORT, user=Config.MYSQL_USER,
-                               passwd=Config.MYSQL_PASS, db=Config.MYSQL_DB, charset='utf8')
-        cur = conn.cursor()
-        cur.execute(query_sql)
-        cur.close()
-        conn.commit()
-        conn.close()
+            ins = SSInstance.objects.get(port=id)
+            # print u
+            ins.u += dt_transfer[id][0]
+            ins.d += dt_transfer[id][1]
+            # print u
+            ins.save()
 
     @staticmethod
     def pull_db_all_user():
         #数据库所有用户信息
-        conn = cymysql.connect(host=Config.MYSQL_HOST, port=Config.MYSQL_PORT, user=Config.MYSQL_USER,
-                               passwd=Config.MYSQL_PASS, db=Config.MYSQL_DB, charset='utf8')
-        cur = conn.cursor()
-        cur.execute("SELECT port, u, d, transfer_enable, passwd, switch, enable FROM user")
-        rows = []
-        for r in cur.fetchall():
-            rows.append(list(r))
-        cur.close()
-        conn.close()
-        return rows
+        return SSInstance.objects.values()
 
     @staticmethod
     def del_server_out_of_bound_safe(rows):
     #停止超流量的服务
     #启动没超流量的服务
         for row in rows:
-            if ServerPool.get_instance().server_is_run(row[0]) > 0:
-                if row[1] + row[2] >= row[3]:
-                    logging.info('db stop server at port [%s]' % (row[0]))
-                    ServerPool.get_instance().del_server(row[0])
-            elif ServerPool.get_instance().server_run_status(row[0]) is False:
-                if row[5] == 1 and row[6] == 1 and  row[1] + row[2] < row[3]:
-                    logging.info('db start server at port [%s] pass [%s]' % (row[0], row[4]))
-                    ServerPool.get_instance().new_server(row[0], row[4])
+            if ServerPool.get_instance().server_is_run(row['port']) > 0:
+                if row['u'] + row['d'] >= row['transfer_enable'] or (not row['enable']):
+                    logging.info('db stop server at port [%s]' % (row['port']))
+                    ServerPool.get_instance().del_server(row['port'])
+            elif ServerPool.get_instance().server_run_status(row['port']) is False:
+                if row['switch'] and row['enable'] and  row['u'] + row['d'] < row['transfer_enable']:
+                    logging.info('db start server at port [%s] pass [%s]' % (row['port'], row['passwd']))
+                    ServerPool.get_instance().new_server(row['port'], row['passwd'])
     @staticmethod
     def thread_db():
         import socket
