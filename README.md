@@ -1,4 +1,5 @@
-#shadowsocks 多用户分支上的简单网站管理界面
+shadowsocks 多用户分支上的简单网站管理界面
+==========================================
 
 基于 [mengskysama](https://github.com/mengskysama/shadowsocks/tree/manyuser) 的多用户分支
 用django admin定义了极其简单的管理界面
@@ -9,9 +10,11 @@
 * 默认数据库为sqlite，使用其他数据库在settings.py中修改
 * 增加enable字段判断，从而在网页中修改字段值后能停止相应的服务
 
-![s1]("https://raw.githubusercontent.com/josephwuzw/josephwuzw.github.io/master/images/ss1.png")
 
-![s2]("https://raw.githubusercontent.com/josephwuzw/josephwuzw.github.io/master/images/ss2.png")
+![s1](https://github.com/josephwuzw/josephwuzw.github.io/blob/master/images/ss1.png "s1")  
+
+![s2](https://github.com/josephwuzw/josephwuzw.github.io/blob/master/images/ss2.png "s2")  
+
 
 
 安装：
@@ -56,7 +59,7 @@ python server.py
 http://127.0.0.1:8000/admin
 
 其他:
-=====
+-----
 * 使用mysql或其他作为数据库新建
 
 如使用mysql,安装MySQL-python包(posgresql安装psycopg2包)
