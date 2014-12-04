@@ -22,11 +22,15 @@ location = lambda x: os.path.join(
 SECRET_KEY = ')ds@g0c-t1g-=3_bw8)jz!oe!z0hbwfkaqpmx2ij4lyq+e&q(a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-TEMPLATE_DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+if DEBUG:
+    TEMPLATE_DEBUG = True
+    ALLOWED_HOSTS = ['*']
+else:
+    TEMPLATE_DEBUG = False
+    # !!!!Change this
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition
