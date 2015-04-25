@@ -26,9 +26,9 @@ class SSInstance(models.Model):
     type = models.IntegerField('Type', default=7, editable=False)
     last_get_gitf_time = models.IntegerField(default=1, editable=False)
     last_rest_pass_time = models.IntegerField(default=1, editable=False)
-    # class Meta:
-    #     managed = False
-    #     db_table = 'user'
+    class Meta:
+        managed = False
+        db_table = 'user'
 
     def __unicode__(self):
         return "%s:%s U:%sM(%s) D:%sM(%s) Lmt:%sM(%s)" % (self.enable, self.port, "%.2f" % (float(self.u)/(1024*1024)), self.u, "%.2f" % (float(self.d)/(1024*1024)), self.d, "%.2f" % (float(self.transfer_enable)/(1024*1024)), self.transfer_enable)
